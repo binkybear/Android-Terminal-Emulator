@@ -198,7 +198,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
             Log.d("mPendingPathBroadcasts","Tamano = " + mTermService.getSessions().size());
             Log.d("mPendingPathBroadcasts","Tamano = " + oldLength);
             TextView label = new TextView(Term.this);
-            @SuppressLint("StringFormatInvalid") String title = getSessionTitle(position, getString(R.string.window_title, position + 1));
+            String title = getSessionTitle(position, getString(R.string.window_title, position + 1));
             label.setText(title);
             if (AndroidCompat.SDK >= 13) {
                 label.setTextAppearance(Term.this, TextAppearance_Holo_Widget_ActionBar_Title);
