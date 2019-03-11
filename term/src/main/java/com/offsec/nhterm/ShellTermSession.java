@@ -102,7 +102,7 @@ public class ShellTermSession extends GenericTermSession {
         env[2] = "HOME=" + settings.getHomePath();
         // Seems the $HOSTNAME is not defined in the file /system/etc/mkshrc on android 9,
         // so the workaround is to set the $HOSTNAME manually by running getprop net.hostname, but shoud getprop be fine to use here?
-        env[3] = "HOSTNAME=" + getSystemProperty("net.hostname");
+        env[3] = "HOSTNAME=" + getSystemProperty("ro.product.name");
        // Log.d("Initialize Sess", settings.getShell());
         mProcId = createSubprocess(mShell, env);
     }
