@@ -50,6 +50,8 @@
    <string name="nh_term_notification_channel">nh_term</string>
    <string name="nh_term_notification_channel_description">Notification for nh_term</string>
    <!-- Preference dialog -->
+
+   <string name="chroot_dir">/data/local/nhsystem/kali-arm64</string>
    <string name="screen_preferences">Screen</string>
 
    <string name="title_statusbar_preference">Status bar</string>
