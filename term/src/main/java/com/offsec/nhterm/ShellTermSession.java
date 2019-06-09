@@ -98,7 +98,7 @@ public class ShellTermSession extends GenericTermSession {
         }
         String[] env = new String[4];
         env[0] = "TERM=" + settings.getTermType();
-        env[1] = "PATH=" + path + ":/data/data/com.offsec.nethunter/files/scripts/";
+        env[1] = "PATH=" + path + ":/data/data/com.offsec.nethunter/files/scripts" + ":/sbin/.magisk/busybox";
         env[2] = "HOME=" + settings.getHomePath();
         // Seems the $HOSTNAME is not defined in the file /system/etc/mkshrc on android 9,
         // so the workaround is to set the $HOSTNAME manually by running getprop net.hostname, but shoud getprop be fine to use here?
