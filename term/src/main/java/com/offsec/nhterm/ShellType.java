@@ -11,9 +11,9 @@ import java.io.InputStreamReader;
 
 class ShellType {
     static final String ANDROID_SHELL =  whichCMD("sh") + " -";
-    static final String ANDROID_SU_SHELL = whichCMD("su");
-    static final String KALI_SHELL = whichCMD("su") + " -c /data/data/com.offsec.nethunter/files/scripts/bootkali";
-    static final String KALI_LOGIN_SHELL = whichCMD("su") +" -c /data/data/com.offsec.nethunter/files/scripts/bootkali_login";
+    static final String ANDROID_SU_SHELL = whichCMD("su") + " --mount-master";
+    static final String KALI_SHELL = whichCMD("su") + " --mount-master -c /data/data/com.offsec.nethunter/files/scripts/bootkali";
+    static final String KALI_LOGIN_SHELL = whichCMD("su") + " --mount-master -c /data/data/com.offsec.nethunter/files/scripts/bootkali_login";
 
     private static String whichCMD(String theCmd){
         String output = null;
