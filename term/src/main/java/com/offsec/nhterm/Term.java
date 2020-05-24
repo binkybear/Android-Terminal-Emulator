@@ -15,7 +15,6 @@
  */
 
 package com.offsec.nhterm;
-
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
@@ -35,6 +34,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
+import android.nfc.Tag;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -58,6 +58,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -198,7 +199,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
             Log.d("mPendingPathBroadcasts","Tamano = " + mTermService.getSessions().size());
             Log.d("mPendingPathBroadcasts","Tamano = " + oldLength);
             TextView label = new TextView(Term.this);
-            @SuppressLint("StringFormatInvalid") String title = getSessionTitle(position, getString(R.string.window_title, position + 1));
+            String title = getSessionTitle(position, getString(R.string.window_title, position + 1));
             label.setText(title);
             if (AndroidCompat.SDK >= 13) {
                 label.setTextAppearance(Term.this, TextAppearance_Holo_Widget_ActionBar_Title);
@@ -376,7 +377,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
 
         Intent broadcast = new Intent(ACTION_PATH_BROADCAST);
         if (AndroidCompat.SDK >= 12) {
-            broadcast.addFlags(FLAG_INCLUDE_STOPPED_PACKAGES);
+            broadcast.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
         }
         mPendingPathBroadcasts++;
         sendOrderedBroadcast(broadcast, PERMISSION_PATH_BROADCAST, mPathReceiver, null, RESULT_OK, null, null);
@@ -388,7 +389,6 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
 
         TSIntent = new Intent(this, TermService.class);
         startService(TSIntent);
-
         if (AndroidCompat.SDK >= 11) {
             int actionBarMode = mSettings.actionBarMode();
             mActionBarMode = actionBarMode;
@@ -411,7 +411,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         setFunctionKeyListener();
 
         PowerManager pm = (PowerManager)getSystemService(Context.POWER_SERVICE);
-        mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, TermDebug.LOG_TAG);
+        mWakeLock = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "com.offsec.nhterm:TermDebug.LOG_TAG");
         WifiManager wm = (WifiManager)getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         int wifiLockMode = WifiManager.WIFI_MODE_FULL;
         if (AndroidCompat.SDK >= 12) {
@@ -777,6 +777,8 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         int id = item.getItemId();
         if (id == R.id.menu_preferences) {
             doPreferences();
+        } else if (id == R.id.menu_chroot_path) {
+            doConfigChrootPath();
         } else if (id == R.id.menu_new_window) {
             doCreateNewWindow();
         } else if (id == R.id.menu_close_window) {
@@ -897,7 +899,7 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
                                 if(CheckRoot.isDeviceRooted()){
                                     Log.d("isDeviceRooted","Device is rooted!");
 
-                                String chroot_dir = "/data/local/nhsystem/kali-armhf"; // Not sure if I can wildcard this
+                                String chroot_dir = mSettings.getChrootDir();
 
                                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
                                         if (!dir_exists(chroot_dir)){
@@ -992,13 +994,13 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
     @TargetApi(Build.VERSION_CODES.KITKAT)
     private void NotFound(String text){
 
-        String msg = "";
+        String msg = "Please config a proper Chroot Container Path in Settings.";
 
-        if (Objects.equals(text, "/data/data/com.offsec.nethunter/files/scripts/bootkali")){
-            msg = "Please run Nethunter Application to generate!";
-        } else if (Objects.equals(text, "/data/local/nhsystem/kali-armhf")){
-            msg = "Missing chroot.  You need to install from Chroot Manager";
-        }
+        //if (Objects.equals(text, "/data/data/com.offsec.nethunter/files/scripts/bootkali")){
+        //    msg = "Please run Nethunter Application to generate!";
+        //} else if (Objects.equals(text, "/data/local/nhsystem/kali-armhf")){
+        //msg = "Missing chroot.  You need to install from Chroot Manager";
+        //}
         /// Do something for not found text (alertDialog)
         alertDialogBuilder = new AlertDialog.Builder(this);
         //alertDialogBuilder.setView(promptsView);
@@ -1080,6 +1082,30 @@ public class Term extends Activity implements UpdateCallback, SharedPreferences.
         }
     }
 
+    private void doConfigChrootPath(){
+        final View promptView = getLayoutInflater().inflate(R.layout.menu_chroot_path, null);
+        final EditText chrootpathEditText = promptView.findViewById(R.id.menu_chroot_path_et);
+        chrootpathEditText.setText(mSettings.getChrootDir());
+        final AlertDialog.Builder adbConfigChrootPath = new AlertDialog.Builder(this);
+        adbConfigChrootPath.setView(promptView);
+        adbConfigChrootPath.setCancelable(false);
+        adbConfigChrootPath.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mSettings.setChrootDir(getApplicationContext(), chrootpathEditText.getText().toString());
+            }
+        });
+        adbConfigChrootPath.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        adbConfigChrootPath.create().show();
+
+
+
+    }
     private void doCreateNewWindow() {
         if (mTermSessions == null) {
             Log.w(TermDebug.LOG_TAG, "Couldn't create new window because mTermSessions == null");

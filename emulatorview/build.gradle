@@ -1,12 +1,18 @@
 apply plugin: 'com.android.library'
 
+repositories {
+    jcenter()
+    google()
+}
+
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25"
+<<<<<<< HEAD
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
 
     defaultConfig {
-        minSdkVersion 4
-        targetSdkVersion 25
+        minSdkVersion 14
+        targetSdkVersion 27
     }
 
     buildTypes {
