@@ -34,7 +34,7 @@
    <string name="send_control_key">"Trimiteţi tasta Control"</string>
    <string name="send_fn_key">"Trimiteţi tasta Fn"</string>
 
-   <string name="window_title">"Fereastră"</string>
+   <string name="window_title">"Fereastră %1$d"</string>
 
    <string name="service_notify_text">"Sesiune de terminal se execută"</string>
 

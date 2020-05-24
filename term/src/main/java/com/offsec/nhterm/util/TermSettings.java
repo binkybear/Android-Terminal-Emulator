@@ -18,8 +18,10 @@ package com.offsec.nhterm.util;
 
 import com.offsec.nhterm.R;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 
 /**
@@ -28,6 +30,7 @@ import android.view.KeyEvent;
 public class TermSettings {
     private SharedPreferences mPrefs;
 
+    private String mChrootPath;
     private int mStatusBar;
     private boolean mFunctionBar;
     private int mActionBarMode;
@@ -71,6 +74,7 @@ public class TermSettings {
 
     private boolean mUseKeyboardShortcuts;
 
+    private static final String CHROOT_DIR = "chroot_dir";
     private static final String STATUSBAR_KEY = "statusbar";
     private static final String FUNCTIONBAR_KEY = "functionbar";
     private static final String ACTIONBAR_KEY = "actionbar";
@@ -183,6 +187,8 @@ public class TermSettings {
     }
 
     private void readDefaultPrefs(Resources res) {
+
+        mChrootPath = res.getString(R.string.chroot_dir);
         mStatusBar = Integer.parseInt(res.getString(R.string.pref_statusbar_default));
         mFunctionBar = res.getBoolean(R.bool.pref_functionbar_default);
         mActionBarMode = res.getInteger(R.integer.pref_actionbar_default);
@@ -223,6 +229,8 @@ public class TermSettings {
 
     public void readPrefs(SharedPreferences prefs) {
         mPrefs = prefs;
+
+        mChrootPath = readStringPref(CHROOT_DIR, mChrootPath);
         mStatusBar = readIntPref(STATUSBAR_KEY, mStatusBar, 1);
         mFunctionBar = readBooleanPref(FUNCTIONBAR_KEY, mFunctionBar);
         mActionBarMode = readIntPref(ACTIONBAR_KEY, mActionBarMode, ACTION_BAR_MODE_MAX);
@@ -284,6 +292,13 @@ public class TermSettings {
         return mPrefs.getBoolean(key, defaultValue);
     }
 
+    public String getChrootDir() { return mChrootPath; }
+
+    public void setChrootDir(Context context, String chrootDir) {
+        mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+        mPrefs.edit().putString(CHROOT_DIR, chrootDir).apply();
+        mPrefs = null;
+    }
     public boolean showStatusBar() {
         return true;
     }

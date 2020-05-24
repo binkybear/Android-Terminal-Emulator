@@ -7,9 +7,10 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.4.0-alpha09'
+        classpath 'com.android.tools.build:gradle:3.2.0'
     }
 }
+
 
 allprojects {
     repositories {
@@ -17,3 +18,13 @@ allprojects {
         google()
     }
 }
+
+ext {
+    compileSdkVersion=28
+    minSdkVersion=14
+    targetSdkVersion=28
+    //version=YYYYMMVVRR (Either "VV" for stable version OR "RR" for pre-release candidate (e.g. 0001 for rc1)
+    versionCode=2019020002
+    versionName="2019.2-rc2"
+}
+

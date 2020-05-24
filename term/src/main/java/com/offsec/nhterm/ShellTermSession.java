@@ -96,12 +96,28 @@ public class ShellTermSession extends GenericTermSession {
         if (settings.verifyPath()) {
             path = checkPath(path);
         }
-        String[] env = new String[3];
+        String[] env = new String[4];
         env[0] = "TERM=" + settings.getTermType();
-        env[1] = "PATH=" + path + ":/data/data/com.offsec.nethunter/files/scripts/";
+        env[1] = "PATH=" + path + ":/data/data/com.offsec.nethunter/files/scripts" + ":/sbin/.magisk/busybox";
         env[2] = "HOME=" + settings.getHomePath();
+        // Seems the $HOSTNAME is not defined in the file /system/etc/mkshrc on android 9,
+        // so the workaround is to set the $HOSTNAME manually by running getprop net.hostname, but shoud getprop be fine to use here?
+        env[3] = "HOSTNAME=" + getSystemProperty("ro.product.name");
        // Log.d("Initialize Sess", settings.getShell());
         mProcId = createSubprocess(mShell, env);
+    }
+    // Copied from stack overflow..https://stackoverflow.com/questions/16944494/system-getpropertyparam-returns-wrong-value-android by @Muzikant
+    private String getSystemProperty(String propertyName) {
+        String propertyValue = "";// let's default empty
+        try {
+            Process getPropProcess = Runtime.getRuntime().exec("getprop " + propertyName);
+            BufferedReader osRes = new BufferedReader(new InputStreamReader(getPropProcess.getInputStream()));
+            propertyValue = osRes.readLine();
+            osRes.close();
+        } catch (Exception e) {
+            Log.d(": Get hostname: ", "Failed to get hostname by $(getprop net.hostname)");
+        }
+        return propertyValue;
     }
 
     private String checkPath(String path) {

@@ -16,6 +16,8 @@
 -->
 
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/menu_chroot_path"
+        android:title="Config Chroot Path" />
     <item android:id="@+id/menu_new_window"
         android:title="@string/new_window"
         android:icon="@drawable/ic_menu_add" />
